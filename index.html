@@ -109,7 +109,154 @@
 				return new Handlebars.SafeString(theString)
 			});
 		}
-	</code></pre>
+	</code><code id="initAutocomplete" class="hljs javascript">
+		/*********************************************************************************************************/
+		/*                                            Handlebars                                                 */
+		/*********************************************************************************************************/
+		/**
+		 * [initAutocomplete Инициализирует автокомплит, ищет название адреса]
+		 * @author Vadim Zhukov
+		 * @date   2015-11-27
+		 * @param  {[type]}   el [Элемент, на котором инициализируется автозаполнение]]
+		 */
+		function initAutocomplete(el){
+			// console.log('-> initAutocomplete');
+
+			$( el ).bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+				$( this ).autocomplete( "instance" ).menu.active ) {
+					event.preventDefault();
+				}
+			}).autocomplete({
+				source: function( request, response ) {
+					var searchWord = request.term;
+
+					if (searchWord.length >= 2){
+						var founded = [];
+						
+						requestSuggest(searchWord).then(function(data){
+							var results = data.results;
+
+							for (var oneResult in results) {
+								if (results.hasOwnProperty(oneResult)) {
+
+									var desc = results[oneResult].desc || false,
+										name = results[oneResult].name || false,
+										type = results[oneResult].type || false;
+										if (type == "geo"){
+											if (desc) {
+												founded.push(desc + ', ' + name);
+											} else {
+												founded.push(name);
+											}
+										}
+										
+								}
+							}
+						}).done(function(event){
+							response(founded);
+						});
+					}
+				},
+				open: function( event, ui ) {
+					var input = $( event.target ),
+						widget = input.autocomplete( "widget" ),
+						style = $.extend( input.css( [
+							"font",
+							"border-left",
+							"padding-left"
+						]), {
+							position: "absolute",
+							visibility: "hidden",
+							"padding-right": 0,
+							"border-right": 0,
+							"white-space": "pre"
+						} ),
+						div = $( "<div/>" ),
+						pos = {
+							my: "left top",
+							collision: "none"
+						},
+						offset = 10;
+					widget.css( "width", "" );
+					div .text( input.val().replace( /\S*$/, "" ) )
+						.css( style )
+						.insertAfter( input );	
+					offset = Math.min(
+						Math.max( offset + div.width(), 0 ),
+						input.width() - widget.width()
+					);
+					div.remove();
+					pos.at = "left+" + offset + " bottom";
+					input.autocomplete( "option", "position", pos );
+					widget.position( $.extend( { of: input }, pos ) );
+				},
+				focus: function() {
+					return false;
+				},
+				minLength: 2,
+				select: function( event, ui ) {
+					this.value = ui.item.
+					value.trim();
+					return false;
+				}
+			});
+		}
+
+		function split( val ) {
+			return val.split( /\s\s*/ );
+		}
+
+		function extractLast( term ) {
+			return term.split(' ').pop().trim();
+		}
+		</code><code id="requestSuggest" class="hljs javascript">
+		/**
+		 * [requestSuggest Ищет существующий адрес, использует API Яндекса suggest-maps]
+		 * @author Vadim Zhukov
+		 * @date   2015-11-27
+		 * @param  {[type]}   part [Часть искоемого адреса]
+		 * @return {[promise]}     [Возвращает ajax]
+		 */
+		function requestSuggest(part){
+			// console.log('-> requestSuggest');
+
+			return $.ajax({
+				type: 'get',
+				url: "https://suggest-maps.yandex.ru/suggest-geo",
+				dataType: "jsonp",
+				data: {
+					lang: 'ru_RU',
+					search_type: 'all',
+					v: 7,
+					part: part
+				}
+			});
+		}
+		</code><code id="requestGeoObject" class="hljs javascript">
+		/**
+		 * [requestGeoObject Ищет гео-объект по имени, использует API Яндекса geocode-maps]
+		 * @author Vadim Zhukov
+		 * @date   2015-11-27
+		 * @param  {[type]}   name [description]
+		 * @return {[promise]}     [Возвращает ajax]
+		 */
+		function requestGeoObject(name){
+			// console.log('-> requestGeoObject');
+
+			return $.ajax({
+				type: 'get',
+				url: "https://geocode-maps.yandex.ru/1.x/",
+				dataType: "jsonp",
+				data: {
+					callback: '',
+					format: 'json',
+					kind: 'street',
+					geocode: name
+				}
+			});
+		}
+		</code></pre>
 </div>
 
 	<script src="assets/jquery.min.js"></script>
