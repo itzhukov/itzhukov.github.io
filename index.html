@@ -169,20 +169,20 @@
 							"border-left",
 							"padding-left"
 						]), {
-							position: "absolute",
-							visibility: "hidden",
-							"padding-right": 0,
-							"border-right": 0,
-							"white-space": "pre"
+							'position': 'absolute',
+							'visibility': 'hidden',
+							'padding-right': 0,
+							'border-right': 0,
+							'white-space': 'pre'
 						} ),
-						div = $( '<div/>' ),
+						div = $('&lt;div/>'),
 						pos = {
 							my: "left top",
 							collision: "none"
 						},
 						offset = 10;
 					widget.css( "width", "" );
-					div .text( input.val().replace( /\S*$/, "" ) )
+					div.text( input.val().replace( /\S*$/, "" ) )
 						.css( style )
 						.insertAfter( input );	
 					offset = Math.min(
