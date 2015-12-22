@@ -22,3 +22,7 @@ pre{
 	color: #fff;
 }
 
+.hljs-params,
+.hljs-class .hljs-title {
+	color: #FF9800;
+}
