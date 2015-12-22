@@ -17,11 +17,11 @@ pre{
 .sidebar ul{
 	list-style-type: decimal-leading-zero;
 	color: #fff;
+	line-height: 30px;
 }
 .sidebar a{
 	color: #fff;
 }
-
 .hljs-params,
 .hljs-class .hljs-title {
 	color: #FF9800;
