@@ -14,6 +14,9 @@
 		<li><a href="#maxLengthCheck">Проверка максимальной длины введённого текста</a></li>
 		<li><a href="#getTemplateAjax">Скачивает Handlebars шаблон и передаёт в callback</a></li>
 		<li><a href="#handlebarsHelpers">Дополнительные возможности для шаблонизатора</a></li>
+		<li><a href="#initAutocomplete">Инициализирует автокомплит, ищет название адреса</a></li>
+		<li><a href="#requestSuggest">Ищет существующий адрес, использует API Яндекса suggest-maps</a></li>
+		<li><a href="#requestGeoObject"> Ищет гео-объект по имени, использует API Яндекса geocode-maps</a></li>
 	</ul>
 </div>
 <div class="container">
@@ -111,7 +114,7 @@
 		}
 	</code><code id="initAutocomplete" class="hljs javascript">
 		/*********************************************************************************************************/
-		/*                                            Handlebars                                                 */
+		/*                                            Yandex API                                                 */
 		/*********************************************************************************************************/
 		/**
 		 * [initAutocomplete Инициализирует автокомплит, ищет название адреса]
