@@ -12,7 +12,7 @@ pre{
 	width: 440px;
 	position: fixed;
 	height: 100%;
-	border-right: 1px solid #A6C424;
+	border-right: 1px solid #a6e22e;
 }
 .sidebar ul{
 	list-style-type: decimal-leading-zero;
@@ -21,6 +21,10 @@ pre{
 }
 .sidebar a{
 	color: #fff;
+	text-decoration: none;
+}
+.sidebar a:hover{
+	text-decoration: underline;
 }
 .hljs-params,
 .hljs-class .hljs-title {
