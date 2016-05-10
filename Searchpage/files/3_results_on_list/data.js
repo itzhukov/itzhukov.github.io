@@ -1,6 +1,6 @@
 ﻿$axure.loadCurrentPage({
   "url":"3_results_on_list.html",
-  "generationDate":new Date(1462891230740.93),
+  "generationDate":new Date(1462892475617.45),
   "isCanvasEnabled":false,
   "variables":["OnLoadVariable"],
   "page":{
@@ -1880,10 +1880,10 @@
                   "isNewIfGroup":false,
                   "actions":[{
                       "action":"linkWindow",
-                      "description":"Open 2 Results on map in Current Window",
+                      "description":"Open 6 Results on map from list in Current Window",
                       "target":{
                         "targetType":"page",
-                        "url":"2_results_on_map.html",
+                        "url":"6_results_on_map_from_list.html",
                         "includeVariables":true},
                       "linkType":"current"}]}]}},
           "tabbable":true,

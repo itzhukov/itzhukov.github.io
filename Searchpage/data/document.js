@@ -21,6 +21,10 @@
         "type":"Wireframe",
         "url":"2_results_on_map.html"},
 {
+        "pageName":"6 Results on map from list",
+        "type":"Wireframe",
+        "url":"6_results_on_map_from_list.html"},
+{
         "pageName":"3 Results on list",
         "type":"Wireframe",
         "url":"3_results_on_list.html"},
