@@ -10,7 +10,7 @@
 <body>
 <div class="sidebar">
 	<ul>
-		<li><a href="#disableHoverWhenScrolling">Выключать hover-эвенты при скролле</a></li>
+		<li><a href="#checkImageExist">Проверка url'а на наличие картинки</a></li>
 		<li><a href="#maxLengthCheck">Проверка максимальной длины введённого текста</a></li>
 		<li><a href="#getTemplateAjax">Скачивает Handlebars шаблон и передаёт в callback</a></li>
 		<li><a href="#handlebarsHelpers">Дополнительные возможности для шаблонизатора</a></li>
@@ -20,7 +20,63 @@
 	</ul>
 </div>
 <div class="container">
-	<pre><code id="disableHoverWhenScrolling" class="hljs javascript">
+	<pre><code id="checkImageExist" class="hljs javascript">
+		/**
+		 * [checkHomepageImages Получение фото карточек сервисов на главной]
+		 * @author Vadim Zhukov
+		 * @date   2016-05-06
+		 */
+		function checkHomepageImages(result){
+			var images = $('.infoblock.cards .card .photo img');
+			var imagesLength = images.length;
+
+			if (imagesLength){
+				var memoizedCheckUrl = _.memoize(checkUrl);
+
+				images.each(function(idx, item){
+					var src = $(item).attr('src');
+					memoizedCheckUrl(src, item);
+				});
+			}
+		}
+		
+			/**
+		 * [checkUrl Проверка на существование фотограций на главной странице]
+		 * @author Vadim Zhukov
+		 * @date   2016-05-06
+		 */
+		function checkUrl(src, item){
+			var blank = '/img/logotemp.svg';
+			var memoizedGetFileType = _.memoize(getFileType);
+
+			$.get(src).complete(function(result){
+				var fileType = memoizedGetFileType(result);
+
+				if (fileType !== 'image'){
+					$(item).attr('src', blank);
+				}
+			});
+		}
+		
+		
+		/**
+		 * [getFileType Разбор GET загловков, получение типа контента]
+		 * @author Vadim Zhukov
+		 * @date   2016-05-06
+		 */
+		function getFileType(result){
+			var headers = result.getAllResponseHeaders().split("\r\n");
+
+			for (var i = headers.length-1; i > 0; i--){
+				var headerLine = headers[i].toString().split(':', 2);
+				if (headerLine[0] == "Content-Type"){
+					var fileType = headerLine[1].toString().split('/', 2)[0].trim();
+					return fileType;
+				}
+			}
+		}
+	</code>
+	<code id="disableHoverWhenScrolling" class="hljs javascript">
 		/**
 		 * [disableHoverWhenScrolling Выключать hover-эвенты при скролле]
 		 * @author Vadim Zhukov
