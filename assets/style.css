@@ -7,6 +7,7 @@ pre{
 }
 .container{
 	padding-left: 440px;
+	min-width: 860px;
 }
 .sidebar{
 	width: 440px;
