@@ -15,6 +15,7 @@ pre{
 	height: 100%;
 	border-right: 1px solid #a6e22e;
 	padding: 0 10px;
+	background: #23241f;
 }
 .sidebar ul{
 	list-style-type: decimal-leading-zero;
