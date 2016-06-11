@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+	body{
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	</style>
+</head>
+<body>
+	<script>
+	var arr = ['#fff', '#000', '#f00', '#0f0', '#00f', '#ff0', '#f0f'];
+	var arrLength = arr.length;
+	var i = 0;
+	var body = document.querySelector('body')
+	document.addEventListener("click", function() {
+		i++;
+		var color = arr[i];
+		if (i >= arrLength) i = 0;
+		body.style = "background: "+color;
+	}, false);
+	</script>
+</body>
+</html>
