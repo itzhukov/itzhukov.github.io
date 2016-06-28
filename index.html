@@ -1,330 +1,165 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>JavaScript Snippets</title>
-	<link rel="stylesheet" href="assets/normalize.css">
-	<link rel="stylesheet" href="assets/monokai-sublime.min.css">
-	<link rel="stylesheet" href="assets/style.css">
+	<title>Document</title>
+	<style>
+	body {
+		padding: 0;
+		margin: 0;
+		overflow: hidden;
+	}
+	</style>
 </head>
 <body>
-<div class="sidebar">
-	<ul>
-		<li><a href="#checkImageExist">Проверка url'а на наличие картинки</a></li>
-		<li><a href="#maxLengthCheck">Проверка максимальной длины введённого текста</a></li>
-		<li><a href="#getTemplateAjax">Скачивает Handlebars шаблон и передаёт в callback</a></li>
-		<li><a href="#handlebarsHelpers">Дополнительные возможности для шаблонизатора</a></li>
-		<li><a href="#initAutocomplete">Инициализирует автокомплит, ищет название адреса</a></li>
-		<li><a href="#requestSuggest">Ищет существующий адрес, использует API Яндекса suggest-maps</a></li>
-		<li><a href="#requestGeoObject"> Ищет гео-объект по имени, использует API Яндекса geocode-maps</a></li>
-	</ul>
-</div>
-<div class="container">
-	<pre><code id="checkImageExist" class="hljs javascript">
-		/*********************************************************************************************************/
-		/*                               Проверка url'а на наличие картинки                                      */
-		/*********************************************************************************************************/
+<canvas id="canvas"></canvas>
+	<script>
+	// RequestAnimFrame: a browser API for getting smooth animations
+	window.requestAnimFrame = (function(){
+		return  window.requestAnimationFrame   ||
+			window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame    ||
+			window.oRequestAnimationFrame      ||
+			window.msRequestAnimationFrame     ||
+			function( callback ){
+			window.setTimeout(callback, 1000 / 60);
+		};
+	})();
 
-		/**
-		 * [checkHomepageImages Получение фото карточек сервисов на главной]
-		 * @author Vadim Zhukov
-		 * @date   2016-05-06
-		 */
-		function checkHomepageImages(result){
-			var images = $('.infoblock.cards .card .photo img');
-			var imagesLength = images.length;
 
-			if (imagesLength){
-				var memoizedCheckUrl = _.memoize(checkUrl);
+	var canvas = document.getElementById("canvas");
+	canvas.addEventListener("mousedown", getPosition, false);
 
-				images.each(function(idx, item){
-					var src = $(item).attr('src');
-					memoizedCheckUrl(src, item);
-				});
+	var ctx = canvas.getContext("2d");
+
+	var W = window.innerWidth,
+		H = window.innerHeight;
+
+	canvas.width = W;
+	canvas.height = H;
+
+	var particleCount = 1000,
+		particles = [],
+		minDist = 30,
+		dist;
+
+	for(var i = 0; i < particleCount; i++) {
+		particles.push(new Particle());
+	}
+
+	function getPosition(event){
+		var x = new Number();
+		var y = new Number();
+
+		if (event.x != undefined && event.y != undefined){
+			x = event.x;
+			y = event.y;
+		} else {
+			x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+			y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+		}
+
+		x -= canvas.offsetLeft;
+		y -= canvas.offsetTop;
+
+		particles.push( new Particle(x, y) );
+	}
+
+	function paintCanvas() {
+		ctx.fillStyle = "rgba(0,0,0, 0.1)";
+		ctx.fillRect(0, 0, W, H);
+	}
+
+	function Particle(x, y) {
+		this.x = x || Math.random() * W;
+		this.y = y || Math.random() * H;
+
+		this.vx = -1 + Math.random() * 3;
+		this.vy = -1 + Math.random() * 3;
+
+		this.radius = 4;
+
+		this.draw = function() {
+			ctx.fillStyle = "white";
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+			ctx.fill();
+		}
+	}
+
+	function draw() {
+		paintCanvas();
+		
+		for (var i = 0; i < particles.length; i++) {
+			p = particles[i];
+			p.draw();
+		}
+		
+		update();
+	}
+
+	function update() {
+
+		for (var i = 0; i < particles.length; i++) {
+			p = particles[i];
+
+			p.x += p.vx;
+			p.y += p.vy
+
+			if(p.x + p.radius > W) 
+				p.x = p.radius;
+			else if(p.x - p.radius < 0) {
+				p.x = W - p.radius;
+			}
+			
+			if(p.y + p.radius > H) 
+				p.y = p.radius;
+			
+			else if(p.y - p.radius < 0) {
+				p.y = H - p.radius;
+			}
+			
+			for(var j = i + 1; j < particles.length; j++) {
+				p2 = particles[j];
+				distance(p, p2);
 			}
 		}
+	}
+
+	// Distance calculator between two particles
+	function distance(p1, p2) {
+		var dist,
+			dx = p1.x - p2.x,
+			dy = p1.y - p2.y;
 		
-			/**
-		 * [checkUrl Проверка на существование фотограций на главной странице]
-		 * @author Vadim Zhukov
-		 * @date   2016-05-06
-		 */
-		function checkUrl(src, item){
-			var blank = '/img/logotemp.svg';
-			var memoizedGetFileType = _.memoize(getFileType);
+		dist = Math.sqrt(dx*dx + dy*dy);
 
-			$.get(src).complete(function(result){
-				var fileType = memoizedGetFileType(result);
+		if(dist <= minDist) {
+			
+			ctx.beginPath();
+			ctx.strokeStyle = "rgba(255,255,255,"+ (1.2-dist/minDist) +")";
+			ctx.moveTo(p1.x, p1.y);
+			ctx.lineTo(p2.x, p2.y);
+			ctx.stroke();
+			ctx.closePath();
+			
+			var ax = dx/5000,
+				ay = dy/5000;
 
-				if (fileType !== 'image'){
-					$(item).attr('src', blank);
-				}
-			});
+			p1.vx -= ax;
+			p1.vy -= ay;
+			
+			p2.vx += ax;
+			p2.vy += ay;
 		}
-		
-		
-		/**
-		 * [getFileType Разбор GET загловков, получение типа контента]
-		 * @author Vadim Zhukov
-		 * @date   2016-05-06
-		 */
-		function getFileType(result){
-			var headers = result.getAllResponseHeaders().split("\r\n");
+	}
 
-			for (var i = headers.length-1; i > 0; i--){
-				var headerLine = headers[i].toString().split(':', 2);
-				if (headerLine[0] == "Content-Type"){
-					var fileType = headerLine[1].toString().split('/', 2)[0].trim();
-					return fileType;
-				}
-			}
-		}
-	</code>
-	<code id="disableHoverWhenScrolling" class="hljs javascript">
-		/**
-		 * [disableHoverWhenScrolling Выключать hover-эвенты при скролле]
-		 * @author Vadim Zhukov
-		 * @date   2015-12-21
-		 */
-		function disableHoverWhenScrolling(){
-			window.addEventListener('scroll', function() {
-				clearTimeout(timer);
-				if(!body.classList.contains('disable-hover')) {
-					body.classList.add('disable-hover');
-				}
-				timer = setTimeout(function(){
-					body.classList.remove('disable-hover');
-				}, 500);
-			}, false);
-		}
-	</code><code id="maxLengthCheck" class="hljs javascript">
-		/**
-		 * [maxLengthCheck Проверка максимальной длины введённого текста]
-		 * @author Vadim Zhukov
-		 * @date   2015-12-21
-		 * @param  {[type]}   object [description]
-		 */
-		function maxLengthCheck(object) {
-			if (object.value.length > object.maxLength)
-			object.value = object.value.slice(0, object.maxLength)
-		}
-	</code><code id="getTemplateAjax" class="hljs javascript">
-		/*********************************************************************************************************/
-		/*                             Handlebars    http://handlebarsjs.com/                                    */
-		/*********************************************************************************************************/
-		/**
-		 * [getTemplateAjax Скачивает Handlebars шаблон и передаёт в callback]
-		 * @author Vadim Zhukov
-		 * @date   2015-12-01
-		 * @param  {[string]}   path   [путь к шаблону]
-		 * @param  {Function} callback [функция каллбек]
-		 */
-		function getTemplateAjax(path, callback) {
-			var source,
-				template;
+	function animloop() {
+		draw();
+		requestAnimFrame(animloop);
+	}
 
-			$.ajax({
-				url: path,
-				cache: true,
-				success: function(data) {
-					var source    = data,
-						template  = Handlebars.compile(source, {noEscape: true});
-
-					if (callback) callback(template);
-				}
-			});
-		}
-	</code><code id="handlebarsHelpers" class="hljs javascript">
-		/**
-		 * [handlebarsHelpers Дополнительные возможности для шаблонизатора]
-		 * @author Vadim Zhukov
-		 * @date   2015-12-15
-		 */
-		function handlebarsHelpers(ev) {
-			// Добавляет бинарные операторы в шаблонизатор
-			Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
-				switch (operator) {
-					case '==':
-						return (v1 == v2) ? options.fn(this) : options.inverse(this);
-					case '!=':
-						return (v1 != v2) ? options.fn(this) : options.inverse(this);
-					case '===':
-						return (v1 === v2) ? options.fn(this) : options.inverse(this);
-					case '<':
-						return (v1 < v2) ? options.fn(this) : options.inverse(this);
-					case '<=':
-						return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-					case '>':
-						return (v1 > v2) ? options.fn(this) : options.inverse(this);
-					case '>=':
-						return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-					case '&&':
-						return (v1 && v2) ? options.fn(this) : options.inverse(this);
-					case '||':
-						return (v1 || v2) ? options.fn(this) : options.inverse(this);
-					default:
-						return options.inverse(this);
-				}
-			});
-			// Добавляет метод trim
-			Handlebars.registerHelper('trimString', function(passedString) {
-				var theString = passedString.substring(0, 150);
-				return new Handlebars.SafeString(theString)
-			});
-		}
-	</code><code id="initAutocomplete" class="hljs javascript">
-		/*********************************************************************************************************/
-		/*                                            Yandex API                                                 */
-		/*********************************************************************************************************/
-		/**
-		 * [initAutocomplete Инициализирует автокомплит, ищет название адреса]
-		 * @author Vadim Zhukov
-		 * @date   2015-11-27
-		 * @param  {[type]}   el [Элемент, на котором инициализируется автозаполнение]]
-		 */
-		function initAutocomplete(el){
-			// console.log('-> initAutocomplete');
-
-			$( el ).bind( "keydown", function( event ) {
-				if ( event.keyCode === $.ui.keyCode.TAB &&
-				$( this ).autocomplete( "instance" ).menu.active ) {
-					event.preventDefault();
-				}
-			}).autocomplete({
-				source: function( request, response ) {
-					var searchWord = request.term;
-
-					if (searchWord.length >= 2){
-						var founded = [];
-						
-						requestSuggest(searchWord).then(function(data){
-							var results = data.results;
-
-							for (var oneResult in results) {
-								if (results.hasOwnProperty(oneResult)) {
-
-									var desc = results[oneResult].desc || false,
-										name = results[oneResult].name || false,
-										type = results[oneResult].type || false;
-										if (type == "geo"){
-											if (desc) {
-												founded.push(desc + ', ' + name);
-											} else {
-												founded.push(name);
-											}
-										}
-										
-								}
-							}
-						}).done(function(event){
-							response(founded);
-						});
-					}
-				},
-				open: function( event, ui ) {
-					var input = $( event.target ),
-						widget = input.autocomplete( "widget" ),
-						style = $.extend( input.css( [
-							"font",
-							"border-left",
-							"padding-left"
-						]), {
-							'position': 'absolute',
-							'visibility': 'hidden',
-							'padding-right': 0,
-							'border-right': 0,
-							'white-space': 'pre'
-						} ),
-						div = $('&lt;div/>'),
-						pos = {
-							my: "left top",
-							collision: "none"
-						},
-						offset = 10;
-					widget.css( "width", "" );
-					div.text( input.val().replace( /\S*$/, "" ) )
-						.css( style )
-						.insertAfter( input );	
-					offset = Math.min(
-						Math.max( offset + div.width(), 0 ),
-						input.width() - widget.width()
-					);
-					div.remove();
-					pos.at = "left+" + offset + " bottom";
-					input.autocomplete( "option", "position", pos );
-					widget.position( $.extend( { of: input }, pos ) );
-				},
-				focus: function() {
-					return false;
-				},
-				minLength: 2,
-				select: function( event, ui ) {
-					this.value = ui.item.
-					value.trim();
-					return false;
-				}
-			});
-		}
-
-		function split( val ) {
-			return val.split( /\s\s*/ );
-		}
-
-		function extractLast( term ) {
-			return term.split(' ').pop().trim();
-		}
-		</code><code id="requestSuggest" class="hljs javascript">
-		/**
-		 * [requestSuggest Ищет существующий адрес, использует API Яндекса suggest-maps]
-		 * @author Vadim Zhukov
-		 * @date   2015-11-27
-		 * @param  {[type]}   part [Часть искоемого адреса]
-		 * @return {[promise]}     [Возвращает ajax]
-		 */
-		function requestSuggest(part){
-			// console.log('-> requestSuggest');
-
-			return $.ajax({
-				type: 'get',
-				url: "https://suggest-maps.yandex.ru/suggest-geo",
-				dataType: "jsonp",
-				data: {
-					lang: 'ru_RU',
-					search_type: 'all',
-					v: 7,
-					part: part
-				}
-			});
-		}
-		</code><code id="requestGeoObject" class="hljs javascript">
-		/**
-		 * [requestGeoObject Ищет гео-объект по имени, использует API Яндекса geocode-maps]
-		 * @author Vadim Zhukov
-		 * @date   2015-11-27
-		 * @param  {[type]}   name [description]
-		 * @return {[promise]}     [Возвращает ajax]
-		 */
-		function requestGeoObject(name){
-			// console.log('-> requestGeoObject');
-
-			return $.ajax({
-				type: 'get',
-				url: "https://geocode-maps.yandex.ru/1.x/",
-				dataType: "jsonp",
-				data: {
-					callback: '',
-					format: 'json',
-					kind: 'street',
-					geocode: name
-				}
-			});
-		}
-		</code></pre>
-</div>
-
-	<script src="assets/jquery.min.js"></script>
-	<script src="assets/highlight.pack.js"></script>
-	<script src="assets/jquery.smoothscroll.min.js"></script>
-	<script src="assets/app.js"></script>
+	animloop();
+	</script>
 </body>
 </html>
