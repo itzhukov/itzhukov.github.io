@@ -39,7 +39,7 @@
 	canvas.width = W;
 	canvas.height = H;
 
-	var particleCount = 0,
+	var particleCount = 300,
 		particles = [],
 		minDist = 80,
 		dist;
@@ -67,7 +67,7 @@
 	}
 
 	function paintCanvas() {
-		ctx.fillStyle = "rgba(0,0,0, 0.5)";
+		ctx.fillStyle = "rgba(0,0,0, 0.1)";
 		ctx.fillRect(0, 0, W, H);
 	}
 
