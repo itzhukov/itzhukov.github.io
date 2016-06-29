@@ -39,7 +39,7 @@
 	canvas.width = W;
 	canvas.height = H;
 
-	var particleCount = 100,
+	var particleCount = 0,
 		particles = [],
 		minDist = 80,
 		dist;
@@ -67,7 +67,7 @@
 	}
 
 	function paintCanvas() {
-		ctx.fillStyle = "rgba(0,0,0, 0.1)";
+		ctx.fillStyle = "rgba(0,0,0, 0.5)";
 		ctx.fillRect(0, 0, W, H);
 	}
 
@@ -78,7 +78,7 @@
 		this.vx = -1 + Math.random() * 3;
 		this.vy = -1 + Math.random() * 3;
 
-		this.radius = 4;
+		this.radius = 6;
 
 		this.draw = function() {
 			ctx.fillStyle = "white";
@@ -107,16 +107,15 @@
 			p.x += p.vx;
 			p.y += p.vy
 
-			if(p.x + p.radius > W) 
+			if(p.x + p.radius > W) {
 				p.x = p.radius;
-			else if(p.x - p.radius < 0) {
+			} else if(p.x - p.radius < 0) {
 				p.x = W - p.radius;
 			}
 			
-			if(p.y + p.radius > H) 
+			if(p.y + p.radius > H) {
 				p.y = p.radius;
-			
-			else if(p.y - p.radius < 0) {
+			} else if(p.y - p.radius < 0) {
 				p.y = H - p.radius;
 			}
 			
