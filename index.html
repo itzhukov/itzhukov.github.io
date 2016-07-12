@@ -39,9 +39,9 @@
 	canvas.width = W;
 	canvas.height = H;
 
-	var particleCount = 300,
+	var particleCount = 0,
 		particles = [],
-		minDist = 80,
+		minDist = W,
 		dist;
 
 	for(var i = 0; i < particleCount; i++) {
@@ -75,10 +75,13 @@
 		this.x = x || Math.random() * W;
 		this.y = y || Math.random() * H;
 
-		this.vx = -1 + Math.random() * 3;
-		this.vy = -1 + Math.random() * 3;
+		// this.vx = -1 + Math.random() * 3;
+		// this.vy = -1 + Math.random() * 3;
 
-		this.radius = 6;
+		this.vx = 0;
+		this.vy = 0;
+
+		this.radius = 2;
 
 		this.draw = function() {
 			ctx.fillStyle = "white";
@@ -134,24 +137,23 @@
 		
 		dist = Math.sqrt(dx*dx + dy*dy);
 
-		if(dist <= minDist) {
-			
-			ctx.beginPath();
-			ctx.strokeStyle = "rgba(255,255,255,"+ (1.2-dist/minDist) +")";
-			ctx.moveTo(p1.x, p1.y);
-			ctx.lineTo(p2.x, p2.y);
-			ctx.stroke();
-			ctx.closePath();
-			
-			var ax = dx/5000,
-				ay = dy/5000;
+		// if(dist <= minDist) {
+			// ctx.beginPath();
+			// ctx.strokeStyle = "rgba(255,255,255,"+ (1.2-dist/minDist) +")";
+			// ctx.moveTo(p1.x, p1.y);
+			// ctx.lineTo(p2.x, p2.y);
+			// ctx.stroke();
+			// ctx.closePath();
+
+			var ax = dx/2000,
+				ay = dy/2000;
 
 			p1.vx -= ax;
 			p1.vy -= ay;
 			
 			p2.vx += ax;
 			p2.vy += ay;
-		}
+		// }
 	}
 
 	function animloop() {
