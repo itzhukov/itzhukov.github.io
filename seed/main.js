@@ -17,8 +17,8 @@ var H = window.innerHeight;
 canvas.width = W;
 canvas.height = H;
 
-var seed = prompt("Введите seed:");
-// var seed = 30;
+// var seed = prompt("Введите seed:");
+var seed = 30;
 var generator = new MersenneTwister(seed) || 0;
 var chunkCount = 60;
 var chunks = [];
