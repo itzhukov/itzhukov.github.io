@@ -7,6 +7,7 @@ document.onreadystatechange = function () {
 			particleId = 0,
 			particleCount = 1,
 			emitterSquare = 10,
+			currentImg = 4,
 			sequence = [];
 
 		var resize = function () {
@@ -15,6 +16,7 @@ document.onreadystatechange = function () {
 		};
 		resize();
 		window.addEventListener('resize', resize);
+		canvas.addEventListener("mousedown", clickOnCanvas, false);
 
 		document.body.appendChild(canvas);
 
@@ -26,6 +28,12 @@ document.onreadystatechange = function () {
 
 		c.fillStile = "black";
 		c.fillRect(0, 0, canvas.width, canvas.height);
+
+		function clickOnCanvas(argument) {
+			var sLen = sequence.length;
+			currentImg++;
+			if (currentImg == sLen) currentImg = 0;
+		}
 
 		/**
 		 * [Particle Particle]
@@ -60,26 +68,16 @@ document.onreadystatechange = function () {
 			this.color = "rgba("+ parseInt(Math.random()*255, 10) + ", 0, 0, 0.9)";
 		}
 
-
 		/* Draw particle */
 		Particle.prototype.draw = function(){
 			this.x += this.vx;
 			this.y += this.vy;
-
 
 			if (Math.random() < 0.1){
 				this.vx += Math.random() * 10 - 5;
 				this.vy += Math.random() * 10 - 5;
 			}
 
-
-			// this.vy += this.gravity;
-			/*
-			if (Math.random() > 0.3){
-				this.vx += Math.random() * 0.1;
-				this.vy += Math.random() * 0.1;
-			}
-			*/
 			this.life++;
 
 			if (this.life >= this.maxLife){
@@ -91,7 +89,7 @@ document.onreadystatechange = function () {
 			c.fillStyle = this.color;
 			// c.fillRect(this.x, this.y, this.width, this.height);
 			// c.drawImage(sequence[this.part], this.x, this.y, 75, 75);
-			c.drawImage(sequence[4], this.x, this.y, 75, 75);
+			c.drawImage(sequence[currentImg], this.x, this.y, 75, 75);
 		};
 
 

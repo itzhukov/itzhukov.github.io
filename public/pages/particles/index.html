@@ -9,11 +9,25 @@
 		margin: 0;
 		overflow: hidden;
 		background: #000;
+		color: #fff;
+	}
+	canvas{
+		position: fixed;
+		z-index: 1;
+		top: 0;
+		left: 0;
+	}
+	p{
+		position: relative;
+		z-index: 2;
+		font-size: 24px;
+		margin:10px;
 	}
 	</style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
+	<p>click anywhere</p>
 	<script>
 	// RequestAnimFrame: a browser API for getting smooth animations
 	window.requestAnimFrame = (function(){
