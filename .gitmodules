@@ -1,0 +1,3 @@
+[submodule "public/pages/ReactChance"]
+	path = public/pages/ReactChance
+	url = ../ReactChance.git
