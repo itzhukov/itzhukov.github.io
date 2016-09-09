@@ -4,10 +4,26 @@
 <meta charset="UTF-8">
 <title>Dots on circle</title>
 <style>
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{overflow:hidden;line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after{content:'';content:none}q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}body{background:#000}#canvas{position:fixed;z-index:1;top:0;left:0}.links{position:relative;z-index:2;margin:20px;display:inline-block;border:10px solid #fff;padding:20px 0}.links a{color:#fff;font-size:24px;margin:50px;line-height:50px}
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{overflow:hidden;line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after{content:'';content:none}q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}.controlPanel{display: block;position: fixed;padding: 10px;}label{color: #fff;display: block;}input{cursor:pointer;color: #fff;display:block;margin-bottom: 10px;width:300px;}body{background:#000}#canvas{position:fixed;z-index:1;top:0;left:0}.links{position:relative;z-index:2;margin:20px;display:inline-block;border:10px solid #fff;padding:20px 0}.links a{color:#fff;font-size:24px;margin:50px;line-height:50px}
 </style>
 </head>
 <body>
+<div class="controlPanel">
+	<label for="dotsCount">Dots count:</label>
+	<input type="range" id="dotsCount" value="700" name="dotsCount" min="1" max="3000">
+	<label for="r1">Radius 1:</label>
+	<input type="range" id="r1" value="300" name="r1" min="1" max="500">
+	<label for="r2">Radius 2:</label>
+	<input type="range" id="r2" value="150" name="r2" min="1" max="300">
+	<label for="dot1">Dot size 1:</label>
+	<input type="range" id="dot1" value="5" name="dot1" min="1" max="30">
+	<label for="dot2">Dot size 2:</label>
+	<input type="range" id="dot2" value="2" name="dot2" min="1" max="30">
+	<label for="alpha">Alpha:</label>
+	<input type="range" id="alpha" value="0.1" name="alpha" step="0.1" min="0.1" max="1">
+	<label for="fps">FPS:</label>
+	<input type="range" id="fps" value="60" name="fps" min="1" max="60">
+</div>
 <script>
 var canvas = document.createElement('canvas');
 var c = canvas.getContext('2d');
@@ -31,7 +47,8 @@ function generateRange(min, max) {
 }
 
 function clearCanvas() {
-	c.fillStyle = "rgba(0, 0, 0, 0.1)";
+	var alpha = document.getElementById("alpha").value;
+	c.fillStyle = "rgba(0, 0, 0, "+alpha+")";
 	c.fillRect(0, 0, document.body.clientWidth, document.body.clientHeight);
 }
 
@@ -63,17 +80,24 @@ function getRandomPointOnRadius(coords, r){
 function frame(event){
 	now = Date.now();
 	delta = now - then;
+	fps = document.getElementById("fps").value;
+	interval = 1000/fps;
+	dotsCount = document.getElementById("dotsCount").value;
+	var r1 = document.getElementById("r1").value;
+	var r2 = document.getElementById("r2").value;
+	var dot1 = document.getElementById("dot1").value;
+	var dot2 = document.getElementById("dot2").value;
 
 	if (delta > interval) {
 		clearCanvas();
-		drawDot( center, 5);
+		drawDot( center, dot1);
 
 		for (var i=0; i< dotsCount; i++){
-			var dotOnRadius = getRandomPointOnRadius(center, 300);
-			drawDot( dotOnRadius, 5);
+			var dotOnRadius = getRandomPointOnRadius(center, r1);
+			drawDot( dotOnRadius, dot1);
 
-			var dotOnDottedRadius = getRandomPointOnRadius(dotOnRadius, 150);
-			drawDot( dotOnDottedRadius, 2);
+			var dotOnDottedRadius = getRandomPointOnRadius(dotOnRadius, r2);
+			drawDot( dotOnDottedRadius, dot2);
 		}
 
 		then = now - (delta % interval);
