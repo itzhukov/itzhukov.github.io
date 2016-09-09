@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Dots on circle</title>
+<style>
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{overflow:hidden;line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after{content:'';content:none}q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}body{background:#000}#canvas{position:fixed;z-index:1;top:0;left:0}.links{position:relative;z-index:2;margin:20px;display:inline-block;border:10px solid #fff;padding:20px 0}.links a{color:#fff;font-size:24px;margin:50px;line-height:50px}
+</style>
+</head>
+<body>
+<script>
+var canvas = document.createElement('canvas');
+var c = canvas.getContext('2d');
+document.body.appendChild(canvas);
+window.addEventListener('resize', resize);
+resize();
+
+var x1 = canvas.width/2;
+var y1 = canvas.height/2;
+var center = [x1, y1];
+var dotsCount = 700;
+
+var fps = 60;
+var now;
+var then = Date.now();
+var interval = 1000/fps;
+var delta;
+
+function generateRange(min, max) {
+	return Math.random() * (max - min) + min;
+}
+
+function clearCanvas() {
+	c.fillStyle = "rgba(0, 0, 0, 0.1)";
+	c.fillRect(0, 0, document.body.clientWidth, document.body.clientHeight);
+}
+
+function resize() {
+	canvas.width = document.documentElement.clientWidth;
+	canvas.height = document.documentElement.clientHeight;
+	x1 = canvas.width/2;
+	y1 = canvas.height/2;
+	center = [x1, y1];
+}
+
+function drawDot(coords, radius){
+	c.fillStyle = "rgba(0, 0, 0, 1)";
+	c.strokeStyle = "rgba(255, 255, 255, 1)";
+	c.beginPath();
+	c.arc(coords[0], coords[1], radius, 0, 2*Math.PI);
+	c.fill();
+	c.stroke();
+}
+
+function getRandomPointOnRadius(coords, r){
+	var an = generateRange(0, 360);
+	var x2 = coords[0] + (r*1) * Math.cos(an);
+	var y2 = coords[1] + (r*1) * Math.sin(an);
+
+	return [x2, y2];
+}
+
+function frame(event){
+	now = Date.now();
+	delta = now - then;
+
+	if (delta > interval) {
+		clearCanvas();
+		drawDot( center, 5);
+
+		for (var i=0; i< dotsCount; i++){
+			var dotOnRadius = getRandomPointOnRadius(center, 300);
+			drawDot( dotOnRadius, 5);
+
+			var dotOnDottedRadius = getRandomPointOnRadius(dotOnRadius, 150);
+			drawDot( dotOnDottedRadius, 2);
+		}
+
+		then = now - (delta % interval);
+	}
+
+	requestAnimationFrame(frame);
+}
+
+frame();
+
+</script>
+</body>
+</html>
