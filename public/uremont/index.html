@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>socket io test</title>
+</head>
+<body>
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	<script>
+		var socket = io.connect('https://uremont:8890', {
+			'force new connection': true,
+			'resource': 'socket',
+			'transports': ['websocket', 'xhr-polling', 'jsonp-polling']
+		});
+
+		socket.on('connect', function () {
+			socket.on('message', function (msg) {
+
+			});
+		});
+	</script>
+</body>
+</html>
