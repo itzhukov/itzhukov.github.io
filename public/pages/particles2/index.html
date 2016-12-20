@@ -2,32 +2,29 @@
 <html lang="ru">
 <head>
 	<meta charset="UTF-8">
-	<title>Particles 2</title>.
-	<head>
-<style>
-	body{
-		background-color: #000;
-		margin: 0;
-		padding: 0;
-		overflow: hidden;
-	}
-	canvas{
-		position: fixed;
-		z-index: 1;
-		top: 0;
-		left: 0;
-	}
-	p{
-		position: relative;
-		z-index: 2;
-		font-size: 24px;
-		margin: 10px;
-		color: #fff;
-	}
-</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>snowflake</title>
+	<meta name="description" content="snowflake"/>
+	<meta name="keywords" content="snowflake" />
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="theme-color" content="#ffffff">
+	<link href="https://fonts.googleapis.com/css?family=PT+Sans|Open+Sans|Roboto" rel="stylesheet">
+	<!--[if lte IE 8]><script src="assets/js/html5shiv.js"></script><![endif]-->
+	<link rel="stylesheet" href="assets/css/style.css?v=16">
+	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css?v=16" /><![endif]-->
+	<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css?v=16" /><![endif]-->
+	<noscript><link rel="stylesheet" href="assets/css/noscript.css?v=15" /></noscript>
+	<script type="text/javascript" src="https://secure.skypeassets.com/i/scom/js/skype-uri.js"></script>
 </head>
 <body>
 	<p>click anywhere</p>
-	<script type="text/javascript" src="js/main.js"></script>
+	<script src="./assets/js/build.js?v=12"></script>
+	<!--[if lte IE 8]><script src="assets/js/respond.min.js"></script><![endif]-->
+	<script>
+	if ('addEventListener' in window) {
+		window.addEventListener('load', function() { document.body.className = document.body.className.replace(/\bis-loading\b/, ''); });
+		document.body.className += (navigator.userAgent.match(/(MSIE|rv:11\.0)/) ? ' is-ie' : '');
+	}
+	</script>
 </body>
 </html>
